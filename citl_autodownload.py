@@ -6,9 +6,11 @@ import sys
 import os
 
 folder = sys.argv[1]
-os.system('mkdir ' + folder + 'downloaded_from_citl')
+subfolder = 'downloaded_from_citl/'
+os.system('mkdir ' + folder + subfolder)
 
-out_folder = folder + 'downloaded_from_citl/'
+out_folder = folder + subfolder
+inside_folder = os.listdir(out_folder)
 
 years = [str(y) for y in xrange(2005,2013)]
 
@@ -64,25 +66,31 @@ for country in countries:
 
         filename = country + '_' + year + '.xml'
         print 'now downloading data to ' + filename
-        br = mechanize.Browser()
-        resp = br.open(url)
+        
+        if not filename in inside_folder:
+            br = mechanize.Browser()
+            resp = br.open(url)
 
-        # clicks the 'export' button
-        
-        br.select_form('nap')
-        resp = br.click(type="submit", nr=1)
-        resp = br.open(resp)
+            # clicks the 'export' button
+            
+            br.select_form('nap')
+            resp = br.click(type="submit", nr=1)
+            resp = br.open(resp)
 
-        # clicks the 'ok' button to download the xml file
-        
-        br.select_form('export')
-        resp = br.click(type="submit", nr=0)
-        resp = br.open(resp)
-        
-        # saves downloaded data to xml file
-        
-        data = resp.read()
-        with open(out_folder + filename, 'w') as f: 
-            f.write(data)
+            # clicks the 'ok' button to download the xml file
+            
+            br.select_form('export')
+            resp = br.click(type="submit", nr=0)
+            resp = br.open(resp)
+            
+            # saves downloaded data to xml file
+            
+            data = resp.read()
+            with open(out_folder + filename, 'w') as f: 
+                f.write(data)
     
+        else:
+            print '>> file already found.'
+
+
     
